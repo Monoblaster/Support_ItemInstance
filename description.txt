@@ -1,35 +1,38 @@
 This support script allows you to set variables for individual items and save and load them
 
+$ItemInstance::Save
+A string with the file path towards were you want the save file to go.
+
 ItemInstance_Save()
-Saves all current Item Instances
+Saves all current Item Instances.
 
 ItemInstance_Load()
-Loads saved Item Instances
+Loads saved Item Instances.
 
 (Object).GetItemInstance( [%tool] )
-Gets the Item Instance from that object and optioanly at the specified tool position
-%tool   :   Optional value for a tool in inventory
-return  :   The requested Item Instance
+Gets the Item Instance from that object and optioanly at the specified tool position.
+%tool   :   Optional value for a tool in inventory.
+return  :   The requested Item Instance.
 
 (ItemInstance).Set(%key, %value)
-Sets the value stored under %key to %value (%key is put through GetSafeVariableName)
-%key    :   Any string to specify a specific value
-%value  :   Any value to be stored under %key
-return  :   The current Item Instance
+Sets the value stored under %key to %value (%key is put through GetSafeVariableName).
+%key    :   Any string to specify a specific value.
+%value  :   Any value to be stored under %key.
+return  :   The current Item Instance.
 
 (ItemInstance).Add(%key, %value)
-Adds %value to the value stored under %key (%key is put through GetSafeVariableName)
-%key    :   Any string to specify a specific value
-%value  :   Any value to be added to %key
-return  :   The current Item Instance
+Adds %value to the value stored under %key (%key is put through GetSafeVariableName).
+%key    :   Any string to specify a specific value.
+%value  :   Any value to be added to %key.
+return  :   The current Item Instance.
 
 (ItemInstance).Get(%key)
-Gets the value stored under %key (%key is put through GetSafeVariableName)
-%key    :   Any string to specify a specific value
-return  :   The value stored under %key
+Gets the value stored under %key (%key is put through GetSafeVariableName).
+%key    :   Any string to specify a specific value.
+return  :   The value stored under %key.
 
 If the current ItemInstance code is not working for you here is how it is set up.
-All ItemInstances are stored in a group in their respective object
+All ItemInstances are stored in a group in their respective object.
 $ItemInstance::Group also holds all of these groups and loaded (but not attached) groups.
-There are additional functions that you have access to that affect the inner workings of the script
+There are additional functions that you have access to that affect the inner workings of the script.
 but are not described here.
