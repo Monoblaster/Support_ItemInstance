@@ -69,7 +69,7 @@ function ItemInstance_Load()
     }
     else
     {
-        echo("ItemInstance_Load: Failed to open save file.");
+        warn("ItemInstance_Load: Failed to open save file.");
     }
 
     %file.close();
@@ -81,22 +81,42 @@ function ShapeBase::GetItemInstance(%obj,%tool)
     %item = "";
     %group = %obj.ItemInstanceGroup;
 
+    if(!isObject(%group))
+    {
+        warn("ShapeBase::GetItemInstance: ItemInstanceGroup doesn't exist wtf.");
+        return;
+    }
+
     if(%tool $= "")
     {
         if(%group.getCount() > 0)
         {
             %item = %group.getObject(0);
         }
+        else
+        {
+            %item = new ScriptObject(ItemInstance);
+            %group.add(%item);
+        }
     }
     else
     {
-        %item = %group.getTool(%tool);
+        if(isObject(%obj.tool[%tool]))
+        {
+            %item = %group.getTool(%tool);
+
+            if(!isObject(%item))
+            {
+                %item = new ScriptObject(ItemInstance){tool = %tool;};
+                %group.add(%item);
+            }
+        }
     }
 
     if(!isObject(%item))
     {
-        %item = new ScriptObject(ItemInstance){tool = %tool;};
-        %group.add(%item);
+        warn("ShapeBase::GetItemInstance: No item to instance from.");
+        return - 1;
     }
 
     return %item;
@@ -135,10 +155,15 @@ function ItemInstanceGroup::GetTool(%obj,%tool)
     for(%i = 0; %i < %count; %i++)
     {
         %currItem = %obj.getObject(%i);
-        if(%tool == %currItem.tool)
+        if(%tool == %currItem.tool && %currItem.tool !$= "")
         {
             break;
         }
+    }
+
+    if(%i >= %count)
+    {
+        return -1;
     }
 
     return %curritem;
@@ -245,6 +270,12 @@ function Item::SetItemInstanceFromThrower(%obj)
         %item = "";
 
         %group = %player.itemInstanceGroup;
+        if(!isObject(%group))
+        {
+            warn("Item::SetItemInstanceFromThrower: ItemInstanceGroup doesn't exist wtf.");
+            return;
+        }
+
         %count = %group.getCount();
         for(%i = 0; %i < %count; %i++)
         {
@@ -405,15 +436,56 @@ package ItemInstance
 
     function ShapeBaseData::OnRemove(%db, %obj)
     {
-        %obj.itemInstanceGroup.delete();
+        %group = %obj.itemInstanceGroup;
+
+        if(isObject(%group))
+        {
+            
+            %group.listobjects();
+            echo("deleting group" SPC %group);
+            %group.delete();
+        }
 
         return Parent::OnRemove(%db, %obj);
     }
 
     function ItemData::onPickup (%this, %obj, %user, %amount)
     {
-        %user.AddItemInstance(%obj.GetItemInstance());
-        parent::onPickup(%this, %obj, %user, %amount);
+        //sigh looks like i have to play "find the difference"
+        %maxTools = %user.getDatablock().maxTools;
+        for(%i = 0; %i < %maxTools; %i++)
+        {
+            %before[%i] = %user.tool[%i];
+        }
+
+        %itemInstance = %obj.GetItemInstance();
+
+        //prevent this item instance from being delete on pickup
+        %itemgroup = %obj.ItemInstanceGroup;
+        %obj.ItemInstanceGroup = "";
+        
+        %r = parent::onPickup(%this, %obj, %user, %amount);
+
+        for(%i = 0; %i < %maxTools; %i++)
+        {
+            if(%before[%i] != %user.tool[%i])
+            {
+                %group =  %user.itemInstanceGroup;
+
+                if(isObject(%group))
+                {
+                    %group.AddTool(%i,%itemInstance);
+                }
+                break;
+            }
+        }
+
+        if(isObject(%group))
+        {
+            %itemgroup.delete();
+        }
+        
+        return %r;
     }
 
     function ItemData::OnAdd(%db, %obj)
