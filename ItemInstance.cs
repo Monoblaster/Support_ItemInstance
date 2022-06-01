@@ -83,7 +83,7 @@ function ShapeBase::GetItemInstance(%obj,%tool)
 
     if(%tool $= "")
     {
-        if(%group.getCount > -1)
+        if(%group.getCount() > -1)
         {
             %item = %group.getObject(0);
         }
