@@ -34,5 +34,5 @@ return  :   The value stored under %key.
 If the current ItemInstance code is not working for you here is how it is set up.
 All ItemInstances are stored in a group in their respective object.
 $ItemInstance::Group also holds all of these groups and loaded (but not attached) groups.
-There are additional functions that you have access to that affect the inner workings of the script.
+There are additional functions that you have access to that affect the inner workings of the script
 but are not described here.
