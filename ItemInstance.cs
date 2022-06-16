@@ -440,9 +440,6 @@ package ItemInstance
 
         if(isObject(%group))
         {
-            
-            %group.listobjects();
-            echo("deleting group" SPC %group);
             %group.delete();
         }
 
@@ -459,30 +456,24 @@ package ItemInstance
         }
 
         %itemInstance = %obj.GetItemInstance();
-
-        //prevent this item instance from being delete on pickup
-        %itemgroup = %obj.ItemInstanceGroup;
-        %obj.ItemInstanceGroup = "";
-        
+        if(isObject(%obj.itemInstanceGroup))
+        {
+            %obj.itemInstanceGroup.clear();
+        }
+       
         %r = parent::onPickup(%this, %obj, %user, %amount);
 
-        for(%i = 0; %i < %maxTools; %i++)
-        {
-            if(%before[%i] != %user.tool[%i])
-            {
-                %group =  %user.itemInstanceGroup;
-
-                if(isObject(%group))
-                {
-                    %group.AddTool(%i,%itemInstance);
-                }
-                break;
-            }
-        }
-
+        %group =  %user.itemInstanceGroup;
         if(isObject(%group))
         {
-            %itemgroup.delete();
+            for(%i = 0; %i < %maxTools; %i++)
+            {
+                if(%before[%i] != %user.tool[%i])
+                {
+                    %group.AddTool(%i,%itemInstance);
+                    break;
+                }
+            }
         }
         
         return %r;
