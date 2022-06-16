@@ -415,7 +415,7 @@ package ItemInstance
     function GameConnection::onClientLeaveGame(%this)
     {
         ItemInstance_Save();
-        return Parent::onClientEnterGame(%this);
+        return Parent::onClientLeaveGame(%this);
     }
 
     function ShapeBaseData::OnAdd(%db, %obj)
