@@ -283,13 +283,9 @@ function Item::SetItemInstanceFromThrower(%obj)
             %tool = %item.tool;
             if(!isObject(%player.tool[%tool]))
             {
+                %obj.AddItemInstance(%item);
                 break;
             }
-        }
-
-        if(isObject(%item))
-        {
-            %obj.AddItemInstance(%item);
         }
     }
 }
