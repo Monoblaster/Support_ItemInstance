@@ -184,6 +184,17 @@ function ItemInstanceGroup::AddTool(%obj,%tool,%itemInstance)
         warn("ItemInstanceGroup::AddTool: tool " @ %tool @ " is empty.");
         return;
     }
+    
+    //remove item for this slot
+    %count = %obj.getCount();
+    for(%i = %count - 1; %i >= 0; %i--)
+    {
+        %currII = %obj.getObject(%i);
+        if(%currII.tool == %tool)
+        {
+            %currII.delete();
+        }
+    }
 
     if(!isObject(%itemInstance))
     {
